@@ -10,9 +10,15 @@ Console development module by Late Submission
 * A superlinter may be added to this branch in future
 
 #### project
-* Can be commited to directly
+* Can be committed to directly
+  * Preferably work is merged into this branch from named branches so that conflicts can be dealt with easily
 * Can include unfinished work
-  * Don't recommend leaving errors though as Unity will open in safe mode
+  * Not recommended to leave errors though as Unity will open in safe mode
+
+#### named branches (rowan, jamie, sienna)
+* Can be committed to directly
+* Can include unfinished work
+  * Not recommended to leave errors though as Unity will open in safe mode
  
 ## Developers
 * Sienna Jenkins - sienna.jenkins@mail.bcu.ac.uk
