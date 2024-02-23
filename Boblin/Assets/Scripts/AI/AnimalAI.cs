@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class AnimalAI : MonoBehaviour
+public abstract class AnimalAI : BehaviourTree.Tree
 {
     // _______HEALTH_______
     // current health of animal
@@ -28,17 +28,18 @@ public abstract class AnimalAI : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    public AnimalAI()
     {
         // set current health to max possible health
-        // needs to be changed in future to allow for saved data to affect this, potentially search player prefs
+        // needs to be changed in future to allow for saved data to affect
+        // this, potentially search player prefs
         currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    // check if the animal is wild or tamed
+    public virtual bool CheckIsTamed()
     {
-        
+        return isTamed;
     }
 
     // virtual - not all animals will attack
@@ -54,9 +55,23 @@ public abstract class AnimalAI : MonoBehaviour
         currentHealth -= damageNum;
     }
 
+    // less aggressive animals may run away if threatened
+    public virtual void Retreat()
+    {
+
+    }
+
     // return if animal is alive or not
     public virtual bool CheckIsAlive()
     {
         return isAlive;
+    }
+
+    // To start an animation, perhaps include functions for specific
+    // animations such as idle, fight, move so these can be called in
+    // the behaviour tree
+    public virtual void StartAnimation()
+    {
+
     }
 }

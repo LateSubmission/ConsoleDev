@@ -25,13 +25,13 @@ namespace BehaviourTree
         // default constructor
         public Node()
         {
+            parent = null;
         }
 
         // constructor for a node with a parent
-        public Node(Node parentNode)
+        public Node(List<Node> children)
         {
-            // assigns parent of this node at construction
-            parent = parentNode;
+            AssignChildren(children);
         }
 
         // abstract Execute function forces derived classes to implement this behaviour
