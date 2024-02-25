@@ -58,7 +58,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem.ps4": {
-      "version": "file:C:/Users/Jamie Smith/Desktop/com.unity.inputsystem.ps4-0.1.6-pre.tgz",
+      "version": "file:../com.unity.inputsystem.ps4-0.1.6-pre.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
@@ -95,7 +95,7 @@
       }
     },
     "com.unity.render-pipelines.ps4": {
-      "version": "file:C:/Users/Jamie Smith/Desktop/com.unity.render-pipelines.ps4-1.9.0.tgz",
+      "version": "file:../com.unity.render-pipelines.ps4-1.9.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {}
