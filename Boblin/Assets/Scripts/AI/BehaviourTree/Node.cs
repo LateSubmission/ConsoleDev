@@ -15,10 +15,10 @@ namespace BehaviourTree
     public abstract class Node
     {
         // this node's current state
-        private NodeState state;
+        protected NodeState state;
 
         // this node's child nodes
-        private List<Node> children = new();
+        protected List<Node> children = new();
         // this node's parent node
         public Node parent;
 
