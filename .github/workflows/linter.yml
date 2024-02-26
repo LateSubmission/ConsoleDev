@@ -1,12 +1,22 @@
 name: Linter
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# events but only for the main branch
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - '!project'
+      - '!rowan'
+      - '!sienna'
+      - '!jamie'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - '!project'
+      - '!rowan'
+      - '!sienna'
+      - '!jamie'
 
 # A workflow run is made up of one or more jobs that can be run sequentially or in parallel
 jobs:
