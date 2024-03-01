@@ -4,22 +4,23 @@ namespace BehaviourTree
 {
     public abstract class Tree : MonoBehaviour
     {
-        private Node root = null;
+    //    private Node root = null;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            // build the tree using "root" as the root node
-            root = BuildTree();
-        }
+    //    // Start is called before the first frame update
+    //    void Start()
+    //    {
+    //        // build the tree using "root" as the root node
+    //        root = BuildTree();
+    //        if (root != null ) { Debug.Log("Tree successfully built"); }
+    //    }
 
-        // Update is called once per frame
-        private void Update()
-        {
-            // if a tree has been created, run it
-            if (root != null) root.Execute();
-        }
+    //    // Update is called once per frame
+    //    private void Update()
+    //    {
+    //        // if a tree has been created, run it
+    //        if (root != null) root.Execute();
+    //    }
 
-        protected abstract Node BuildTree();
+    //    protected abstract Node BuildTree();
     }
 }

@@ -1,7 +1,9 @@
+using BehaviourTree;
+using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class AnimalAI : BehaviourTree.Tree
+public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
 {
     // _______HEALTH_______
     // current health of animal
@@ -37,8 +39,56 @@ public abstract class AnimalAI : BehaviourTree.Tree
         currentHealth = maxHealth;
     }
 
+    protected Node BuildTree(AnimalAI animal)
+    {
+        // behaviour tree structure
+        Node root = new Sequencer(new List<Node>
+        {
+            new Selector(new List<Node>
+            {
+                new Sequencer(new List<Node>
+                {
+                    new CheckIsTamed(animal),
+                    new Selector(new List<Node>
+                    {
+                        new Sequencer(/*new List<Node> { CheckIsStay(), Stay() }*/)
+                        // FollowPlayer();
+                    })
+                }),
+                new Selector(new List<Node>
+                {
+                    new Sequencer(new List<Node>
+                    {
+                        // IsPlayerNear(),
+                        new Selector(new List<Node>
+                        {
+                            new Sequencer(new List<Node>
+                            {
+                                // CheckIsThreatened(),
+                                // FightOrFlight()
+                            }),
+                            // WaitForPlayer()
+                        })
+                    }),
+                    // random selector
+                    new Selector(/*true, new List<Node> { Wander(), Rest(), Search() }*/)
+                })
+            }),
+            new Sequencer(new List<Node>
+            {
+                // CheckHasFood(),
+                // EatFood(),
+                // CheckFoodEffect(),
+                // ReactToFood()
+            }),
+
+        });
+        Debug.Log("Tree built for " + animal);
+        return root;
+    }
+
     // check if the animal is wild or tamed
-    public virtual bool CheckIsTamed()
+    public virtual bool GetIsTamed()
     {
         return isTamed;
     }

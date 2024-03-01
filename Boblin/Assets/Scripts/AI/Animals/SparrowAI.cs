@@ -4,53 +4,21 @@ using System.Collections.Generic;
 
 public class SparrowAI : AnimalAI
 {
-    public SparrowAI() { }
+    private Node root = null;
 
-    protected override Node BuildTree()
+    //public SparrowAI() 
+    //{
+    //    root = BuildTree(this);
+    //}
+    private void Start()
     {
-        // behaviour tree structure
-        Node root = new Sequencer(new List<Node>
-        {
-            new Selector(new List<Node>
-            {
-                new Sequencer(new List<Node>
-                {
-                    // IsTamed();
-                    new Selector(new List<Node>
-                    {
-                        new Sequencer(/*new List<Node> { CheckIsStay(), Stay() }*/)
-                        // FollowPlayer();
-                    })
-                }),
-                new Selector(new List<Node>
-                {
-                    new Sequencer(new List<Node>
-                    {
-                        // IsPlayerNear(),
-                        new Selector(new List<Node>
-                        {
-                            new Sequencer(new List<Node>
-                            {
-                                // CheckIsThreatened(),
-                                // FightOrFlight()
-                            }),
-                            // WaitForPlayer()
-                        })
-                    }),
-                    // random selector
-                    new Selector(/*true, new List<Node> { Wander(), Rest(), Search() }*/)
-                })
-            }),
-            new Sequencer(new List<Node>
-            {
-                // CheckHasFood(),
-                // EatFood(),
-                // CheckFoodEffect(),
-                // ReactToFood()
-            }),
-            
-        });
-
-        return root;
+        root = BuildTree(this);
     }
+
+    private void Update()
+    {
+        //if a tree has been created, run it
+        if (root != null) root.Execute();
+    }
+
 }
