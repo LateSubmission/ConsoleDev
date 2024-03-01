@@ -18,6 +18,8 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public AggressionLevel aggression;
     // whether animal is wild or tamed
     public bool isTamed = false;
+    // whether animal stays in place or follows player
+    public bool isStay = false;
 
 
     // Should this be in a namespace?
@@ -39,6 +41,7 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
         currentHealth = maxHealth;
     }
 
+    // build the behaviour tree, passing in individual animal type
     protected Node BuildTree(AnimalAI animal)
     {
         // behaviour tree structure
@@ -51,7 +54,7 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
                     new CheckIsTamed(animal),
                     new Selector(new List<Node>
                     {
-                        new Sequencer(/*new List<Node> { CheckIsStay(), Stay() }*/)
+                        new Sequencer(new List<Node> { new CheckIsStay(animal), new StayBehaviour(animal) })
                         // FollowPlayer();
                     })
                 }),
@@ -91,6 +94,12 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public virtual bool GetIsTamed()
     {
         return isTamed;
+    }
+
+    // check if the animal is staying or following
+    public virtual bool GetIsStay()
+    {
+        return isStay;
     }
 
     // virtual - not all animals will attack

@@ -7,26 +7,65 @@ using UnityEngine;
 
 namespace BehaviourTree
 {
-    /// <summary>
-    /// Returns SUCCESS if animal is tamed, else FAILURE
-    /// </summary>
-    public class CheckIsTamed : Node
+    public abstract class LeafNode : Node
     {
-        // reference to animal
-        AnimalAI animal;
+        // leaf node reference to individual animal instance
+        protected AnimalAI animal;
 
-        public CheckIsTamed(AnimalAI animalType) 
+        // constructor assigns animal instance
+        public LeafNode(AnimalAI animalType)
         {
-            // let the program know which animal to check
             animal = animalType;
         }
 
+        // overrides Execute() from node but requires definition in derived classes
+        public override abstract NodeState Execute();
+
+    }
+
+    /// <summary>
+    /// Returns SUCCESS if animal is tamed, else FAILURE
+    /// </summary>
+    public class CheckIsTamed : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public CheckIsTamed(AnimalAI animalType) : base(animalType) { }
+
+        // define execute logic for each leaf node
         public override NodeState Execute()
         {
             // if animal is tamed, return success, else return failure
             NodeState state = animal.GetIsTamed() ? NodeState.SUCCESS : NodeState.FAILURE;
             Debug.Log("Is Sparrow tamed? " + animal.GetIsTamed());
             return state;            
+        }
+    }
+
+    public class CheckIsStay : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public CheckIsStay(AnimalAI animalType) : base (animalType) { }
+
+        // define execute logic for each leaf node
+        public override NodeState Execute()
+        {
+            // if animal is staying, return success, else return failure
+            NodeState state = animal.GetIsStay() ? NodeState.SUCCESS : NodeState.FAILURE;
+            Debug.Log("Is Sparrow staying? " + animal.GetIsStay());
+            return state;
+        }
+    }
+
+    public class StayBehaviour : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public StayBehaviour(AnimalAI animalType) : base(animalType) { }
+
+        // define execute logic for each leaf node
+        public override NodeState Execute()
+        {
+            NodeState state = NodeState.SUCCESS;
+            return state;
         }
     }
 
