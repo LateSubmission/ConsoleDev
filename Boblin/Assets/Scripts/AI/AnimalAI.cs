@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public abstract class AnimalAI : BehaviourTree.Tree
 {
     // _______HEALTH_______

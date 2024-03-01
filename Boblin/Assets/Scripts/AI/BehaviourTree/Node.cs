@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 
+// THE CODE BELOW USES THIRD PARTY CODE - YouTube video: Create an AI with behaviour trees [Unity/C# tutorial] by Mina Pêcheux
+// Available here: https://www.youtube.com/watch?v=aR6wt5BlE-E&t=21s
+
 // namespace to hold all behaviour tree-related code
 namespace BehaviourTree
 {
@@ -17,7 +20,7 @@ namespace BehaviourTree
         // this node's current state
         protected NodeState state;
 
-        // this node's child nodes
+        // this node's child node(s)
         protected List<Node> children = new();
         // this node's parent node
         public Node parent;
@@ -28,14 +31,11 @@ namespace BehaviourTree
             parent = null;
         }
 
-        // constructor for a node with a parent
+        // constructor for a node with children
         public Node(List<Node> children)
         {
             AssignChildren(children);
         }
-
-        // abstract Execute function forces derived classes to implement this behaviour
-        public abstract NodeState Execute();
 
         /// <summary>
         /// Assign node(s) as a child of this node
@@ -51,5 +51,8 @@ namespace BehaviourTree
             // add the child nodes to this node's list of children
             children.AddRange(childNodes);
         }
+
+        // abstract Execute function forces derived classes to implement this behaviour
+        public abstract NodeState Execute();
     }
 }

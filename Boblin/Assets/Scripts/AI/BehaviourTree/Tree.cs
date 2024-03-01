@@ -4,11 +4,12 @@ namespace BehaviourTree
 {
     public abstract class Tree : MonoBehaviour
     {
-        Node root = null;
+        private Node root = null;
 
         // Start is called before the first frame update
         void Start()
         {
+            // build the tree using "root" as the root node
             root = BuildTree();
         }
 

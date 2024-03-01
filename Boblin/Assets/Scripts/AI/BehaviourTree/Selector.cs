@@ -9,6 +9,9 @@ public class Selector : Node
     public Selector() : base() { }
 
     public Selector(List<Node> children) : base(children) { }
+    
+    // allows for random selection of children
+    public Selector(bool isRandom, List<Node> children) : base(children) { }
 
     public override NodeState Execute()
     {
@@ -21,7 +24,7 @@ public class Selector : Node
             {
                 case NodeState.RUNNING:
                     state = NodeState.RUNNING;
-                    continue;
+                    return state;
                 case NodeState.SUCCESS:
                     state = NodeState.SUCCESS;
                     return state;
