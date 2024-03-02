@@ -1,14 +1,24 @@
 using UnityEngine;
+using BehaviourTree;
+using System.Collections.Generic;
 
-public class SparrowAI : MonoBehaviour
+public class SparrowAI : AnimalAI
 {
-    // Start is called before the first frame update
-    void Start()
+    private Node root = null;
+
+    //public SparrowAI() 
+    //{
+    //    root = BuildTree(this);
+    //}
+    private void Start()
     {
+        root = BuildTree(this);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        //if a tree has been created, run it
+        if (root != null) root.Execute();
     }
+
 }
