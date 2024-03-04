@@ -12,10 +12,14 @@ namespace BehaviourTree
         // leaf node reference to individual animal instance
         protected AnimalAI animal;
 
+        // reference to player
+        protected GameObject player;
+
         // constructor assigns animal instance
         public LeafNode(AnimalAI animalType)
         {
             animal = animalType;
+            player = animal.player;
         }
 
         // overrides Execute() from node but requires definition in derived classes
@@ -64,6 +68,25 @@ namespace BehaviourTree
         // define execute logic for each leaf node
         public override NodeState Execute()
         {
+            NodeState state = NodeState.SUCCESS;
+            return state;
+        }
+    }
+
+    public class IsPlayerNear : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public IsPlayerNear(AnimalAI animalType) : base(animalType) { }
+
+        // define execute logic for each leaf node
+        public override NodeState Execute()
+        {
+            Vector3 playerPos = player.transform.position;
+            if (Vector3.Distance(playerPos, animal.transform.position) > animal.safeDist)
+            {
+                // return true 
+            }
+
             NodeState state = NodeState.SUCCESS;
             return state;
         }

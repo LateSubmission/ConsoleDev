@@ -20,6 +20,11 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public bool isTamed = false;
     // whether animal stays in place or follows player
     public bool isStay = false;
+    // distance at which objects/player can be detected
+    public float safeDist;
+
+    // PLAYER REFS
+    public GameObject player;
 
 
     // Should this be in a namespace?
