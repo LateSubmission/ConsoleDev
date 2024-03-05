@@ -35,7 +35,7 @@ namespace BehaviourTree
         // use constructor from LeafNode, passing in animalType
         public CheckIsTamed(AnimalAI animalType) : base(animalType) { }
 
-        // define execute logic for each leaf node
+        // determines state of this node
         public override NodeState Execute()
         {
             // if animal is tamed, return success, else return failure
@@ -50,7 +50,7 @@ namespace BehaviourTree
         // use constructor from LeafNode, passing in animalType
         public CheckIsStay(AnimalAI animalType) : base (animalType) { }
 
-        // define execute logic for each leaf node
+        // determines state of this node
         public override NodeState Execute()
         {
             // if animal is staying, return success, else return failure
@@ -65,7 +65,7 @@ namespace BehaviourTree
         // use constructor from LeafNode, passing in animalType
         public StayBehaviour(AnimalAI animalType) : base(animalType) { }
 
-        // define execute logic for each leaf node
+        // determines state of this node
         public override NodeState Execute()
         {
             NodeState state = NodeState.SUCCESS;
@@ -78,7 +78,7 @@ namespace BehaviourTree
         // use constructor from LeafNode, passing in animalType
         public IsPlayerNear(AnimalAI animalType) : base(animalType) { }
 
-        // define execute logic for each leaf node
+        // determines state of this node
         public override NodeState Execute()
         {
             Vector3 playerPos = player.transform.position;
@@ -92,9 +92,33 @@ namespace BehaviourTree
         }
     }
 
+    public class CheckIsThreatened : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public CheckIsThreatened(AnimalAI animalType) : base(animalType) { }
 
-    //public class FightOrFlight : Node
-    //{
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // if animal is staying, return success, else return failure
+            NodeState state = animal.GetIsThreatened() ? NodeState.SUCCESS : NodeState.FAILURE;
+            Debug.Log("Is Sparrow threatened? " + animal.GetIsThreatened());
+            return state;
+        }
+    }
 
-    //}
+
+    public class FightOrFlight : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public FightOrFlight(AnimalAI animalType) : base(animalType) { }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            animal.FightOrFlight(animal);
+
+            return NodeState.SUCCESS;
+        }
+    }
 }

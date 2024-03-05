@@ -1,6 +1,6 @@
 using BehaviourTree;
 
-public class SparrowAI : AnimalAI
+public class ColobusAI : AnimalAI
 {
     private Node root = null;
 
@@ -18,5 +18,4 @@ public class SparrowAI : AnimalAI
         //if a tree has been created, run it
         if (root != null) root.Execute();
     }
-
 }

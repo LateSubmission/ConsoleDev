@@ -20,6 +20,8 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public bool isTamed = false;
     // whether animal stays in place or follows player
     public bool isStay = false;
+    // whether animal feels threatened or not
+    public bool isThreatened = false;
     // distance at which objects/player can be detected
     public float safeDist;
 
@@ -73,7 +75,7 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
                             new Sequencer(new List<Node>
                             {
                                 // CheckIsThreatened(),
-                                // FightOrFlight()
+                                new FightOrFlight(animal)
                             }),
                             // WaitForPlayer()
                         })
@@ -105,6 +107,29 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public virtual bool GetIsStay()
     {
         return isStay;
+    }
+
+    // check if animal is feeling threatened or not
+    public bool GetIsThreatened()
+    {
+        return isThreatened;
+    }
+
+    // determines behaviour in response to threat
+    public void FightOrFlight(AnimalAI animal)
+    {
+        switch (animal)
+        {
+            case SparrowAI:
+                Debug.Log("I'm a sparrow");
+                break;
+            case ColobusAI:
+                Debug.Log("I'm a colobus");
+                break;
+            default:
+                Debug.Log("I am a different animal");
+                break;
+        }
     }
 
     // virtual - not all animals will attack
