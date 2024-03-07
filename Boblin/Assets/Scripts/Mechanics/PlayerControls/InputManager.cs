@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour
         playerInput = new PlayerInput();
         movement = playerInput.Movement;
         motor = GetComponent<PlayerMotor>();
+        movement.Jump.performed += ctx => motor.Jump();
     }
 
     // Update is called once per frame
