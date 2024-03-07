@@ -1917,6 +1917,20 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1681922615}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &937294722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937294713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f6567a14ef4604084c651f5d4e30b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 100
 --- !u!1001 &1045646354
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2092,6 +2106,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sparrow_AI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6788538757290762323, guid: 016b40314a59a8a4ba653cffe690328b,
+        type: 3}
+      propertyPath: m_TagString
+      value: Bird
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11924,6 +11943,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 937294714}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 150b771c021f45d48873c0d8caddd485,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 937294722}
   m_SourcePrefab: {fileID: 100100000, guid: 150b771c021f45d48873c0d8caddd485, type: 3}
 --- !u!1001 &1682553263
 PrefabInstance:
