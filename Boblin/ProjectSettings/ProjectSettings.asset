@@ -741,12 +741,12 @@ PlayerSettings:
   ps4pnPresence: 1
   ps4pnFriends: 1
   ps4pnGameCustomData: 1
-  playerPrefsSupport: 0
+  playerPrefsSupport: 1
   enableApplicationExit: 0
   resetTempFolder: 1
   restrictedAudioUsageRights: 0
   ps4UseResolutionFallback: 0
-  ps4ReprojectionSupport: 0
+  ps4ReprojectionSupport: 1
   ps4UseAudio3dBackend: 0
   ps4UseLowGarlicFragmentationMode: 1
   ps4SocialScreenEnabled: 0
@@ -769,7 +769,19 @@ PlayerSettings:
   ps4AllowPS5Detection: 0
   ps4GPU800MHz: 1
   ps4attribEyeToEyeDistanceSettingVR: 0
-  ps4IncludedModules: []
+  ps4IncludedModules:
+  - libc.prx
+  - libSceAudioLatencyEstimation.prx
+  - libSceFace.prx
+  - libSceFaceTracker.prx
+  - libSceFios2.prx
+  - libSceFontGsm.prx
+  - libSceHand.prx
+  - libSceHandTracker.prx
+  - libSceHeadTracker.prx
+  - libSceJobManager.prx
+  - libSceNpToolkit2.prx
+  - libSceS3DConversion.prx
   ps4attribVROutputEnabled: 0
   monoEnv: 
   splashScreenBackgroundSourceLandscape: {fileID: 0}

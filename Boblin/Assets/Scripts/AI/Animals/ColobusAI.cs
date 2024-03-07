@@ -4,10 +4,6 @@ public class ColobusAI : AnimalAI
 {
     private Node root = null;
 
-    //public SparrowAI() 
-    //{
-    //    root = BuildTree(this);
-    //}
     private void Start()
     {
         root = BuildTree(this);

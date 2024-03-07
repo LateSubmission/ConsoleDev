@@ -121,4 +121,71 @@ namespace BehaviourTree
             return NodeState.SUCCESS;
         }
     }
+
+    public class WaitForPlayer : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public WaitForPlayer(AnimalAI animalType) : base(animalType) { }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // stay in place
+                // animalType.Stay()?
+            // wait for player to do something
+                // check if food in radius? or just do nothing
+            // idle animation
+
+            return NodeState.SUCCESS;
+        }
+    }
+
+    public class Wander : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public Wander(AnimalAI animalType) : base(animalType) { }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // Wander steering behaviour.
+                // Could have an array of points on the map to seek
+                // Could seek a point in a circle in front of AI
+
+            return NodeState.SUCCESS;
+        }
+    }
+
+    public class Rest : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public Rest(AnimalAI animalType) : base(animalType) { }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // sit animation, no other tasks
+
+            return NodeState.SUCCESS;
+        }
+    }
+
+    public class Search : LeafNode
+    {
+        string foodStr;
+
+        // use constructor from LeafNode, passing in animalType
+        public Search(AnimalAI animalType) : base(animalType)
+        {
+            foodStr = animalType.foodName;
+        }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // searching for provided food
+
+            return NodeState.SUCCESS;
+        }
+    }
 }

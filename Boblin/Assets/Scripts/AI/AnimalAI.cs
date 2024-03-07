@@ -1,6 +1,9 @@
 using BehaviourTree;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_PS4
+using UnityEngine.PS4;
+#endif
 
 
 public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
@@ -24,6 +27,10 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public bool isThreatened = false;
     // distance at which objects/player can be detected
     public float safeDist;
+
+    // _______PERSONALITY_______
+    // preferred food
+    public string foodName;
 
     // PLAYER REFS
     public GameObject player;

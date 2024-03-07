@@ -1456,6 +1456,7 @@ MonoBehaviour:
   isStay: 0
   isThreatened: 0
   safeDist: 0
+  foodName: 
   player: {fileID: 0}
 --- !u!4 &900849881 stripped
 Transform:
@@ -12040,6 +12041,7 @@ MonoBehaviour:
   isStay: 0
   isThreatened: 0
   safeDist: 0
+  foodName: 
   player: {fileID: 0}
 --- !u!850595691 &2081834419
 LightingSettings:
