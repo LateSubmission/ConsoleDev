@@ -37,14 +37,14 @@ namespace BehaviourTree
             // if animal is tamed, return success, else return failure
             NodeState state = animal.GetIsTamed() ? NodeState.SUCCESS : NodeState.FAILURE;
             Debug.Log("Is Sparrow tamed? " + animal.GetIsTamed());
-            return state;            
+            return state;
         }
     }
 
     public class CheckIsStay : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
-        public CheckIsStay(AnimalAI animalType) : base (animalType) { }
+        public CheckIsStay(AnimalAI animalType) : base(animalType) { }
 
         // define execute logic for each leaf node
         public override NodeState Execute()

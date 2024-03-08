@@ -42,7 +42,6 @@ public class HealthController : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player has died.");
-        
     }
 
     // Coroutine for invulnerability cooldown

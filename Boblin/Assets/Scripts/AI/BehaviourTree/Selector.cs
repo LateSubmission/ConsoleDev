@@ -9,18 +9,17 @@ public class Selector : Node
     public Selector() : base() { }
 
     public Selector(List<Node> children) : base(children) { }
-    
+
     // allows for random selection of children
     public Selector(bool isRandom, List<Node> children) : base(children) { }
 
+    // return success if any children successful
+    // return failure if all children fail
     public override NodeState Execute()
     {
-        // return success if any children successful
-        // return failure if all children fail
-        
         foreach (Node child in children)
         {
-            switch(child.Execute())
+            switch (child.Execute())
             {
                 case NodeState.RUNNING:
                     state = NodeState.RUNNING;
