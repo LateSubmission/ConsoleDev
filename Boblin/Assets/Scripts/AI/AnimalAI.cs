@@ -1,6 +1,7 @@
 using BehaviourTree;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 #if UNITY_PS4
 using UnityEngine.PS4;
 #endif
@@ -8,6 +9,9 @@ using UnityEngine.PS4;
 
 public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
 {
+    // _______NAV MESH_______
+    public NavMeshAgent navAgent;
+
     // _______HEALTH_______
     // current health of animal
     public int currentHealth;
@@ -22,15 +26,21 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     // whether animal is wild or tamed
     public bool isTamed = false;
     // whether animal stays in place or follows player
-    public bool isStay = false;
+    public bool isStay = false; // use an idle animation
     // whether animal feels threatened or not
     public bool isThreatened = false;
     // distance at which objects/player can be detected
     public float safeDist;
+    // current food object to be eaten
+    public Food foodTarget = null;
 
     // _______PERSONALITY_______
     // preferred food
-    public string foodName;
+    public string foodBest;
+    // least favourite food
+    public string foodWorst;
+    // poisonous food
+    public string foodPoison;
 
     // PLAYER REFS
     public GameObject player;
@@ -167,8 +177,9 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     // To start an animation, perhaps include functions for specific
     // animations such as idle, fight, move so these can be called in
     // the behaviour tree
-    public virtual void StartAnimation()
+    public virtual void SetAnimation()
     {
-
+        // for resting behaviour, use sitting animation
+        // for stay, use idle standing still
     }
 }

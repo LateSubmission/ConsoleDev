@@ -1,5 +1,4 @@
 using BehaviourTree;
-using UnityEngine;
 
 public class SparrowAI : AnimalAI
 {
