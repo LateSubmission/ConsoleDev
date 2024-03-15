@@ -151,13 +151,13 @@ public abstract class AnimalAI : MonoBehaviour
         switch (animal)
         {
             case SparrowAI:
-                Debug.Log("I'm a sparrow");
+                //Debug.Log("I'm a sparrow");
                 break;
             case ColobusAI:
-                Debug.Log("I'm a colobus");
+                //Debug.Log("I'm a colobus");
                 break;
             default:
-                Debug.Log("I am a different animal");
+                //Debug.Log("I am a different animal");
                 break;
         }
     }

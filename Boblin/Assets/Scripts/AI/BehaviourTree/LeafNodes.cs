@@ -39,7 +39,7 @@ namespace BehaviourTree
         {
             // if animal is tamed, return success, else return failure
             NodeState state = animal.GetIsTamed() ? NodeState.SUCCESS : NodeState.FAILURE;
-            Debug.Log("Is Sparrow tamed? " + animal.GetIsTamed());
+            //Debug.Log("Is Sparrow tamed? " + animal.GetIsTamed());
             return state;
         }
     }
@@ -57,7 +57,7 @@ namespace BehaviourTree
         {
             // if animal is staying, return success, else return failure
             NodeState state = animal.GetIsStay() ? NodeState.SUCCESS : NodeState.FAILURE;
-            Debug.Log("Is Sparrow staying? " + animal.GetIsStay());
+            //Debug.Log("Is Sparrow staying? " + animal.GetIsStay());
             return state;
         }
     }
@@ -113,7 +113,7 @@ namespace BehaviourTree
         {
             // if animal is staying, return success, else return failure
             NodeState state = animal.GetIsThreatened() ? NodeState.SUCCESS : NodeState.FAILURE;
-            Debug.Log("Is Sparrow threatened? " + animal.GetIsThreatened());
+            //Debug.Log("Is Sparrow threatened? " + animal.GetIsThreatened());
             return state;
         }
     }
