@@ -7,7 +7,7 @@ using UnityEngine.PS4;
 #endif
 
 
-public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
+public abstract class AnimalAI : MonoBehaviour
 {
     // _______NAV MESH_______
     public NavMeshAgent navAgent;
@@ -23,6 +23,8 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     // _______AFFECTS BEHAVIOUR_______
     // level of aggression towards player/animals
     public AggressionLevel aggression;
+    // current reaction to food
+    public FoodEffect foodEffect;
     // whether animal is wild or tamed
     public bool isTamed = false;
     // whether animal stays in place or follows player
@@ -33,6 +35,8 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     public float safeDist;
     // current food object to be eaten
     public Food foodTarget = null;
+    // current food being eaten
+    public Food foodEaten = null;
 
     // _______PERSONALITY_______
     // preferred food
@@ -40,9 +44,9 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
     // least favourite food
     public string foodWorst;
     // poisonous food
-    public string foodPoison;
+    public string foodPoisonous;
 
-    // PLAYER REFS
+    // _______PLAYER REFS_______
     public GameObject player;
 
 
@@ -54,6 +58,15 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
         low,
         medium,
         high
+    }
+
+    // how food affects animal
+    public enum FoodEffect
+    {
+        neutral,
+        dislike,
+        like,
+        poisoned,
     }
 
     // Start is called before the first frame update
@@ -147,6 +160,24 @@ public abstract class AnimalAI : MonoBehaviour// : BehaviourTree.Tree
                 Debug.Log("I am a different animal");
                 break;
         }
+    }
+
+    // react happily to favourite food
+    public void FoodMakeHappy()
+    {
+
+    }
+
+    // react angrily to lesat favourite food
+    public void FoodMakeAngry()
+    {
+
+    }
+
+    // die as a result of poisonous food
+    public void FoodMakeDie()
+    {
+
     }
 
     // virtual - not all animals will attack
