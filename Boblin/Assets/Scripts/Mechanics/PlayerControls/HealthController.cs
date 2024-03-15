@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthController : MonoBehaviour
 {
     [SerializeField]
-    private int maxHealth = 100;
+    private int maxHealth = 3;
 
     [SerializeField]
     private int currentHealth;
+
+    public Image[] hearts_health;
 
     private bool isInvulnerable = false; // Flag to track invulnerability
     private float invulnerabilityDuration = 1f; // Duration of invulnerability in seconds
@@ -22,7 +27,7 @@ public class HealthController : MonoBehaviour
     {
         if (other.CompareTag("Bird") && !isInvulnerable) // Check if not already invulnerable
         {
-            TakeDamage(10);
+            TakeDamage(1);
             Debug.Log("Player's health decreased. Current health: " + currentHealth);
             StartCoroutine(InvulnerabilityCooldown());
         }
@@ -31,10 +36,12 @@ public class HealthController : MonoBehaviour
     private void TakeDamage(int damageAmount)
     {
         currentHealth -= damageAmount;
+        hearts_health[currentHealth].gameObject.SetActive(false);
 
         // Check if the player is dead
         if (currentHealth <= 0)
         {
+
             Die();
         }
     }
