@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 // This file contains all leaf nodes for animal AI behaviour tree
@@ -43,6 +44,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Returns SUCCESS if animal has been commanded to stay
+    /// </summary>
     public class CheckIsStay : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -58,6 +62,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Animal performs its defined stay behaviour
+    /// </summary>
     public class StayBehaviour : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -71,6 +78,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Returns SUCCESS if player is within this animal's safe distance
+    /// </summary>
     public class IsPlayerNear : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -90,6 +100,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Returns SUCCESS if animal has been threatened
+    /// </summary>
     public class CheckIsThreatened : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -105,7 +118,9 @@ namespace BehaviourTree
         }
     }
 
-
+    /// <summary>
+    /// Animal either becomes aggressive or flees depending on their aggression level
+    /// </summary>
     public class FightOrFlight : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -120,6 +135,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Defines behaviour of animal while waiting for player to trigger another behaviour
+    /// </summary>
     public class WaitForPlayer : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -138,6 +156,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Wander steering behaviour with no specific aim
+    /// </summary>
     public class Wander : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -154,6 +175,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Animal behaviour while resting, different to stay behaviour
+    /// </summary>
     public class Rest : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -168,6 +192,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Behaviour to search for food
+    /// </summary>
     public class Search : LeafNode
     {
         string foodStr;
@@ -187,6 +214,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Returns SUCCESS if animal has a piece of food they are moving towards, otherwise there is no food nearby
+    /// </summary>
     public class CheckHasFood : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -237,6 +267,9 @@ namespace BehaviourTree
         }
     }
 
+    /// <summary>
+    /// Behaviour for animal to eat food
+    /// </summary>
     public class EatFood : LeafNode
     {
         // use constructor from LeafNode, passing in animalType
@@ -261,10 +294,94 @@ namespace BehaviourTree
                 // set nav agent's destination to food position
                 animal.navAgent.SetDestination(foodPos);
             }
-            
+
+            animal.foodEaten = animal.foodTarget;
             // if food eaten, unassign food target
             animal.foodTarget = null;
             // return success as food has been eaten
+            return NodeState.SUCCESS;
+        }
+    }
+
+    /// <summary>
+    /// Check what effect the food should have on the animal (positive, negative, death, etc.)
+    /// </summary>
+    public class CheckFoodEffect : LeafNode
+    {
+        Food currentFood;
+
+        // use constructor from LeafNode, passing in animalType
+        public CheckFoodEffect(AnimalAI animalType) : base(animalType)
+        {
+            // store current food locally
+            currentFood = animal.foodEaten;
+        }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // if the current food is the animal's favourite
+            if (currentFood.type == animal.foodBest)
+            {
+                // set the food's effect on the animal to "like"
+                animal.foodEffect = AnimalAI.FoodEffect.like;
+            }
+            // if the current food is the animal's _least_ favourite
+            else if (currentFood.type == animal.foodWorst)
+            {
+                // set the food's effect on the animal to "dislike"
+                animal.foodEffect = AnimalAI.FoodEffect.dislike;
+            }
+            // if the current food is poisonous to the animal
+            else if (currentFood.type == animal.foodPoisonous)
+            {
+                // set the food's effect on the animal to "poisoned"
+                animal.foodEffect = AnimalAI.FoodEffect.poisoned;
+            }
+            // if food is _not_ in any above category, it has no specific effect on the animal
+            else
+            {
+                // set the food's effect on the animal to "neutral"
+                animal.foodEffect = AnimalAI.FoodEffect.neutral;
+            }
+
+            // effect on animal has been adjusted, return success
+            return NodeState.SUCCESS;
+        }
+    }
+
+    /// <summary>
+    /// Affect animal based on result of CheckFoodEffect node
+    /// </summary>
+    public class ReactToFood : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public ReactToFood(AnimalAI animalType) : base(animalType)
+        {
+
+        }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            // CONSIDER IF THIS COULD BE INCORPORATED IN THE CHECKFOODEFFECT NODE
+
+            // if animal likes the current food
+            if (animal.foodEffect == AnimalAI.FoodEffect.like)
+            {
+                animal.FoodMakeHappy();
+            }
+            // if animal dislikes current food
+            else if (animal.foodEffect == AnimalAI.FoodEffect.dislike)
+            {
+                animal.FoodMakeAngry();
+            }
+            // if current food is poisonous
+            else if (animal.foodEffect == AnimalAI.FoodEffect.poisoned)
+            {
+                animal.FoodMakeDie();
+            }
+
             return NodeState.SUCCESS;
         }
     }
