@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SparrowAI : AnimalAI
 {
+    // the root node of the sparrow's behaviour tree
     private Node root = null;
 
     //public SparrowAI() 
@@ -11,6 +12,8 @@ public class SparrowAI : AnimalAI
     //}
     private void Start()
     {
+        CheckPlayerPrefs(this, "sparrow", maxHealth);
+
         root = BuildTree(this);
 #if UNITY_PS4
         Debug.Log("This sparrow is on ps4");

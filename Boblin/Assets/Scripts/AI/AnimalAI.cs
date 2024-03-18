@@ -21,6 +21,8 @@ public abstract class AnimalAI : MonoBehaviour
     private bool isAlive = true;
 
     // _______AFFECTS BEHAVIOUR_______
+    // how animal can travel
+    public TravelLocation travelType;
     // level of aggression towards player/animals
     public AggressionLevel aggression;
     // current reaction to food
@@ -69,6 +71,14 @@ public abstract class AnimalAI : MonoBehaviour
         poisoned,
     }
 
+    // what the animal can travel in/on
+    public enum TravelLocation
+    {
+        land,
+        water,
+        air
+    }
+
     // Start is called before the first frame update
     public AnimalAI()
     {
@@ -77,6 +87,20 @@ public abstract class AnimalAI : MonoBehaviour
         // this, potentially search player prefs
         currentHealth = maxHealth;
     }
+
+    // checks if player prefs exists already and assigns if so
+    // only checks member variables that could change throughout gameplay
+    public void CheckPlayerPrefs(AnimalAI animalInstance, string animalPrefix, int animalMaxHealth)
+    {
+        // currentHealth
+        if (PlayerPrefs.HasKey(animalPrefix + "CurrentHealth"))
+            animalInstance.currentHealth = PlayerPrefs.GetInt(animalPrefix + "CurrentHealth");
+        else animalInstance.currentHealth = animalMaxHealth;
+        animalInstance.isAlive = (animalInstance.currentHealth > 0);
+
+
+    }
+
 
     // build the behaviour tree, passing in individual animal type
     protected Node BuildTree(AnimalAI animal)
