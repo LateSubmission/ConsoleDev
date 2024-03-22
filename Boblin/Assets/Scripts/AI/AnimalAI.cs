@@ -9,10 +9,22 @@ using UnityEngine.PS4;
 
 public abstract class AnimalAI : MonoBehaviour
 {
-    // _______NAV MESH_______
+    // _______INDIVIDUAL_______
+    [Header("INDIVIDUAL")]
+    public string animalName;
+
+    // _______MOVEMENT_______
+    [Header("MOVEMENT")]
     public NavMeshAgent navAgent;
+    // how animal can travel
+    public TravelLocation travelType;
+    // movement speeds
+    public float walkSpeed, runSpeed;
+    // distance of wander sphere origin from player
+    public float wanderDist;
 
     // _______HEALTH_______
+    [Header("HEALTH")]
     // current health of animal
     public int currentHealth;
     // max health of animal
@@ -21,26 +33,26 @@ public abstract class AnimalAI : MonoBehaviour
     private bool isAlive = true;
 
     // _______AFFECTS BEHAVIOUR_______
-    // how animal can travel
-    public TravelLocation travelType;
-    // level of aggression towards player/animals
-    public AggressionLevel aggression;
-    // current reaction to food
-    public FoodEffect foodEffect;
+    [Header("BEHAVIOUR")]
+    // distance at which objects/player can be detected
+    public float safeDist;
     // whether animal is wild or tamed
     public bool isTamed = false;
     // whether animal stays in place or follows player
     public bool isStay = false; // use an idle animation
     // whether animal feels threatened or not
     public bool isThreatened = false;
-    // distance at which objects/player can be detected
-    public float safeDist;
+    // level of aggression towards player/animals
+    public AggressionLevel aggression;
+    // current reaction to food
+    public FoodEffect foodEffect;
     // current food object to be eaten
     public Food foodTarget = null;
     // current food being eaten
     public Food foodEaten = null;
 
     // _______PERSONALITY_______
+    [Header("PERSONALITY")]
     // preferred food
     public string foodBest;
     // least favourite food
@@ -49,6 +61,7 @@ public abstract class AnimalAI : MonoBehaviour
     public string foodPoisonous;
 
     // _______PLAYER REFS_______
+    [Header("PLAYER")]
     public GameObject player;
 
 
@@ -80,12 +93,20 @@ public abstract class AnimalAI : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    public AnimalAI()
+    //public AnimalAI()
+    private void Start()
+    {
+        
+    }
+
+    public void BaseInit()
     {
         // set current health to max possible health
         // needs to be changed in future to allow for saved data to affect
         // this, potentially search player prefs
         currentHealth = maxHealth;
+        // set speed for nav agent
+        navAgent.speed = walkSpeed;
     }
 
     // checks if player prefs exists already and assigns if so
@@ -97,8 +118,6 @@ public abstract class AnimalAI : MonoBehaviour
             animalInstance.currentHealth = PlayerPrefs.GetInt(animalPrefix + "CurrentHealth");
         else animalInstance.currentHealth = animalMaxHealth;
         animalInstance.isAlive = (animalInstance.currentHealth > 0);
-
-
     }
 
 
@@ -123,19 +142,19 @@ public abstract class AnimalAI : MonoBehaviour
                 {
                     new Sequencer(new List<Node>
                     {
-                        // IsPlayerNear(),
+                        new IsPlayerNear(animal),
                         new Selector(new List<Node>
                         {
                             new Sequencer(new List<Node>
                             {
                                 // CheckIsThreatened(),
-                                new FightOrFlight(animal)
+                                //new FightOrFlight(animal)
                             }),
                             // WaitForPlayer()
                         })
                     }),
                     // random selector
-                    new Selector(/*true, new List<Node> { Wander(), Rest(), Search() }*/)
+                    new Selector(/*true,*/ new List<Node> { new Wander(animal), new Rest(animal), new Search(animal) })
                 })
             }),
             new Sequencer(new List<Node>
@@ -147,7 +166,7 @@ public abstract class AnimalAI : MonoBehaviour
             }),
 
         });
-        Debug.Log("Tree built for " + animal);
+        Debug.Log("Tree built for " + animal.animalName);
         return root;
     }
 
@@ -236,5 +255,24 @@ public abstract class AnimalAI : MonoBehaviour
     {
         // for resting behaviour, use sitting animation
         // for stay, use idle standing still
+    }
+
+    public Vector3 GetForwardDirection()
+    {
+        return transform.forward;
+    }
+
+    public void FacePlayer()
+    {
+        //transform.forward = player.transform.position - transform.position;
+        //if (transform.forward.magnitude > 1) transform.forward = transform.forward.normalized;
+        Vector3 vectorToPlayer = GetVectorToPlayer();
+        Vector3 destinationToTurn = transform.position + (vectorToPlayer.normalized * 0.1f);
+        navAgent.SetDestination(destinationToTurn);
+    }
+
+    public Vector3 GetVectorToPlayer()
+    {
+        return player.transform.position - transform.position;
     }
 }

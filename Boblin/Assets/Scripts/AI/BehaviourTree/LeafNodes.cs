@@ -39,7 +39,7 @@ namespace BehaviourTree
         {
             // if animal is tamed, return success, else return failure
             NodeState state = animal.GetIsTamed() ? NodeState.SUCCESS : NodeState.FAILURE;
-            //Debug.Log("Is Sparrow tamed? " + animal.GetIsTamed());
+            //Debug.Log("Is " + animal.animalName + " tamed? " + animal.GetIsTamed());
             return state;
         }
     }
@@ -89,13 +89,32 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
+            NodeState state;
             Vector3 playerPos = player.transform.position;
             if (Vector3.Distance(playerPos, animal.transform.position) > animal.safeDist)
             {
-                // return true 
+                state = NodeState.FAILURE;
             }
+            else
+            {
+                Debug.Log("Player is near " + animal + "!");
 
-            NodeState state = NodeState.SUCCESS;
+                // calculate vector to player
+                Vector3 vectorToPlayer = animal.GetVectorToPlayer();
+
+                // make no difference between animal and player y value
+                // so only comparing x and z directions
+                vectorToPlayer.y = 0.0f;
+
+                // dot product between forward vector and vector to player
+                float dotVector = Vector3.Dot(animal.transform.forward.normalized, vectorToPlayer.normalized);
+
+                // only turn if not already facing player
+                if (vectorToPlayer.magnitude > animal.safeDist * 0.9f || dotVector < 0.99f) animal.FacePlayer();
+                else animal.navAgent.ResetPath();
+
+                state = NodeState.SUCCESS;
+            }
             return state;
         }
     }
@@ -167,9 +186,25 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
+            if (animal.navAgent.hasPath)
+            {
+                Debug.Log("Wander not executed, already has path");
+                return NodeState.SUCCESS; 
+            }
+
+            Debug.Log("Wander executed");
             // Wander steering behaviour.
-                // Could have an array of points on the map to seek
-                // Could seek a point in a circle in front of AI
+            // Could have an array of points on the map to seek
+            // Could seek a point in a circle in front of AI
+
+            // distance to sphere origin from player
+            float sphereDist = animal.wanderDist;
+
+            // create sphere origin position
+            Vector3 sphereOrigin = animal.transform.position + animal.GetForwardDirection() * sphereDist;
+            Debug.Log("Sphere origin: " + sphereOrigin);
+
+            animal.navAgent.SetDestination(AiMovement.GetWanderPos(sphereOrigin, sphereDist));
 
             return NodeState.SUCCESS;
         }

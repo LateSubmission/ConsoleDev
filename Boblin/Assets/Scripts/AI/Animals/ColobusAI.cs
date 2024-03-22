@@ -6,6 +6,8 @@ public class ColobusAI : AnimalAI
 
     private void Start()
     {
+        BaseInit();
+
         root = BuildTree(this);
     }
 

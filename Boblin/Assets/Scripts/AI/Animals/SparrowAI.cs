@@ -12,12 +12,20 @@ public class SparrowAI : AnimalAI
     //}
     private void Start()
     {
+        BaseInit();
+
         CheckPlayerPrefs(this, "sparrow", maxHealth);
 
         root = BuildTree(this);
+
+
 #if UNITY_PS4
         Debug.Log("This sparrow is on ps4");
 #endif
+
+        animalName = "Sparrow";
+
+
     }
 
     private void Update()
