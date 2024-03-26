@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Selector : Node
 {
-    private bool isRandom;
+    private readonly bool isRandom;
 
     public Selector() : base() { }
 

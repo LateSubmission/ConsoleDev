@@ -136,7 +136,7 @@ namespace BehaviourTree
             }
             else
             {
-                Debug.Log("Player is near " + animal + "!");
+                //Debug.Log("Player is near " + animal + "!");
                 state = NodeState.SUCCESS;
             }
             return state;
@@ -154,8 +154,9 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
-            // USED FOR TESTING ONLY! GUARANTEES THREATENED BEHAVIOUR
-            animal.IsThreatened = true;
+            // USED FOR TESTING ONLY!
+            //animal.IsThreatened = true; // GUARANTEES THREATENED BEHAVIOUR
+            //animal.IsThreatened = animal.GetVectorToPlayer().magnitude < animal.DangerDist;
 
             // if animal is staying, return success, else return failure
             NodeState state = animal.IsThreatened ? NodeState.SUCCESS : NodeState.FAILURE;
@@ -235,25 +236,12 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
-            // stay in place
-                // animalType.Stay()?
-            // wait for player to do something
-                // check if food in radius? or just do nothing
             // idle animation
 
-            // calculate vector to player
-            Vector3 vectorToPlayer = animal.GetVectorToPlayer();
-
-            // make it so there is no difference between animal and player y values
-            // so only comparing x and z directions
-            vectorToPlayer.y = 0.0f;
-
-            // used to see if animal is facing the player
-            float dotVector = Vector3.Dot(animal.transform.forward.normalized, vectorToPlayer.normalized);
-
+            // already facing player so reset any existing paths
+            if (animal.IsFacingPlayer()) animal.navAgent.ResetPath();
             // only turn if not already facing player
-            if (vectorToPlayer.magnitude > animal.DetectDist * 0.9f || dotVector < 0.99f) animal.FacePlayer();
-            else animal.navAgent.ResetPath();
+            else animal.FacePlayer();
 
             return NodeState.SUCCESS;
         }

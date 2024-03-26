@@ -452,7 +452,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127066117}
-  m_LocalRotation: {x: 0.33798665, y: -0.11234332, z: 0.040673885, w: 0.9335361}
+  m_LocalRotation: {x: 0.33798668, y: -0.11234335, z: 0.040673904, w: 0.9335361}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2218,8 +2218,13 @@ MonoBehaviour:
   maxHealth: 5
   isAlive: 1
   detectDist: 0
+  dangerDist: 0
   isTamed: 0
   isThreatened: 0
+  isAttacking: 0
+  currentThreatAmount: 0
+  maxThreatAmount: 0
+  maxThreatTimer: 0
   aggressionLevel: 0
   foodEffect: 0
   foodTarget: {fileID: 0}
@@ -2240,6 +2245,27 @@ NavMeshAgent:
     type: 3}
   m_PrefabInstance: {fileID: 1161847652}
   m_PrefabAsset: {fileID: 0}
+--- !u!135 &900849883
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900849875}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &907388058
 GameObject:
   m_ObjectHideFlags: 3
@@ -3003,6 +3029,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 900849876}
+    - targetCorrespondingSourceObject: {fileID: 6788538757290762323, guid: 016b40314a59a8a4ba653cffe690328b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 900849883}
   m_SourcePrefab: {fileID: 100100000, guid: 016b40314a59a8a4ba653cffe690328b, type: 3}
 --- !u!4 &1163067297 stripped
 Transform:
@@ -12751,7 +12781,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1584061734}
-  m_LocalRotation: {x: 0.30385295, y: -0.113746665, z: 0.036566187, w: 0.94519734}
+  m_LocalRotation: {x: 0.30385298, y: -0.113746695, z: 0.036566194, w: 0.94519734}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -14145,8 +14175,13 @@ MonoBehaviour:
   maxHealth: 10
   isAlive: 1
   detectDist: 10
+  dangerDist: 5
   isTamed: 0
-  isThreatened: 1
+  isThreatened: 0
+  isAttacking: 0
+  currentThreatAmount: 0
+  maxThreatAmount: 2
+  maxThreatTimer: 2
   aggressionLevel: 1
   foodEffect: 0
   foodTarget: {fileID: 0}

@@ -10,18 +10,12 @@ using UnityEngine.PS4;
 public abstract class AnimalAI : MonoBehaviour
 {
     // _______INDIVIDUAL_______
-    [Header("INDIVIDUAL")]
+    [Header("INDIVIDUAL ---------------")]
     // typically used in debug statements
     protected string animalName;
     // _______MOVEMENT_______
-    [Header("MOVEMENT")]
+    [Header("MOVEMENT -----------------")]
     public NavMeshAgent navAgent;
-    // how animal can travel
-    public TravelLocation travelType;
-    // set movement speeds
-    public float walkSpeed, runSpeed;
-    // distance of wander sphere origin from player
-    public float wanderDist;
     // timer for updating nav agent destination
     private float navAgentUpdateTimer;
     public float NavAgentUpdateTimer
@@ -30,9 +24,15 @@ public abstract class AnimalAI : MonoBehaviour
         // timer cannot be negative
         set { navAgentUpdateTimer = Mathf.Max(0, value); }
     }
+    // how animal can travel
+    public TravelLocation travelType;
+    // set movement speeds
+    public float walkSpeed, runSpeed;
+    // distance of wander sphere origin from player
+    public float wanderDist;
 
     // _______HEALTH_______
-    [Header("HEALTH")]
+    [Header("HEALTH -------------------")]
     // current health of animal
     [SerializeField] private int currentHealth;
     public int CurrentHealth
@@ -47,13 +47,21 @@ public abstract class AnimalAI : MonoBehaviour
     [SerializeField] private bool isAlive = true;
 
     // _______AFFECTS BEHAVIOUR_______
-    [Header("BEHAVIOUR")]
+    [Header("BEHAVIOUR ----------------")]
     // distance at which objects/player can be detected
     [SerializeField] private float detectDist;
     public float DetectDist
     {
         get { return detectDist; }
         set { detectDist = value; }
+    }
+
+    // distance at which objects/player can be detected
+    [SerializeField] private float dangerDist;
+    public float DangerDist
+    {
+        get { return dangerDist; }
+        set { dangerDist = value; }
     }
 
     // whether animal is wild or tamed
@@ -89,24 +97,81 @@ public abstract class AnimalAI : MonoBehaviour
         {
             isThreatened = value;
             Debug.Log("IsThreatened set to " + value);
+            // threatened again, so increase amount count
+            CurrentThreatAmount++;
             navAgent.ResetPath();
         }
     }
 
+    // if alrady attacking, logic to start attacking will not run
+    [SerializeField] private bool isAttacking = false;
+    public bool IsAttacking
+    {
+        get { return isAttacking; }
+        // animal must be threatened to attack
+        set
+        {
+            // reset threat amount and timer
+            ResetThreatDetection();
+
+            // isAttacking can only be true if threatened
+            if (value && IsThreatened) isAttacking = true; 
+            else isAttacking = false;
+        }
+    }
+
+    // used as part of checks for whether to attack
+    [SerializeField] private int currentThreatAmount;
+    public int CurrentThreatAmount
+    {
+        get { return currentThreatAmount; }
+        // do not want amount to be negative or > max
+        set { currentThreatAmount = Mathf.Clamp(value, 0, MaxThreatAmount); }
+    }
+
+    // used to compare to currentThreatamount
+    [SerializeField] private int maxThreatAmount;
+    public int MaxThreatAmount
+    {
+        get { return maxThreatAmount; }
+        set { maxThreatAmount = value; }
+    }
+
+    // used as part of checks for whether to attack
+    private float currentThreatTimer;
+    public float CurrentThreatTimer
+    {
+        get { return currentThreatTimer; }
+        // timer cannot be < 0
+        set { currentThreatTimer = Mathf.Max(0, value); }
+    }
+
+    // used to compare to currentThreatTimer
+    [SerializeField] private float maxThreatTimer;
+    public float MaxThreatTimer
+    {
+        get { return maxThreatTimer; }
+        // timer cannot be < 0
+        set { maxThreatTimer = value; }
+    }
+
     // detects when player leaves or enters detectDist
-    private SphereCollider detectCollider;
+    private SphereCollider detectCollider = null;
 
     // level of aggression towards player/animals
     public AggressionLevel aggressionLevel;
+
     // current reaction to food
     public FoodEffect foodEffect;
+
     // current food object to be eaten
     public Food foodTarget = null;
+
     // current food being eaten
     public Food foodEaten = null;
 
     // _______PERSONALITY_______
-    [Header("PERSONALITY")]
+    [Header("PERSONALITY --------------")]
     // food that can make the animal like you
     [SerializeField] private string foodBest;
     public string FoodBest
@@ -135,7 +200,7 @@ public abstract class AnimalAI : MonoBehaviour
     }
 
     // _______PLAYER REFS_______
-    [Header("PLAYER")]
+    [Header("PLAYER -------------------")]
     public GameObject player;
 
     // various levels of aggression that an animal could have
@@ -220,7 +285,6 @@ public abstract class AnimalAI : MonoBehaviour
                             new Sequencer(new List<Node>
                             {
                                 new CheckIsThreatened(animal),
-                                //new IsPlayerNear(animal),
                                 new FightOrFlight(animal)
                             }),
                             new WaitForPlayer(animal)
@@ -247,6 +311,8 @@ public abstract class AnimalAI : MonoBehaviour
     {
         //Debug.Log("Fight or Flight Low RUN");
 
+        // *********** Start FEAR animation, then do below logic ***********
+
         // move in direction opposite to player/threat
         // vector in opposite direction to player
         Vector3 vectorAway = GetVectorFromPlayer().normalized * DetectDist;
@@ -257,13 +323,74 @@ public abstract class AnimalAI : MonoBehaviour
 
     public void FightOrFlightMedium()
     {
-        // look aggressive
-        // if player threatens again, or does not move after an amount of time, attack
+        Debug.Log("Fight or Flight MEDIUM");
+        // only run if NOT already attacking
+        if (!IsAttacking)
+        {
+            // look aggressive
+            // Start (SPIN or FEAR) animation
+            // increment timer
+            CurrentThreatTimer += Time.deltaTime;
+
+            // if player threatens again, or does not move after an amount of time, attack
+            if (CurrentThreatAmount >= MaxThreatAmount || CurrentThreatTimer >= MaxThreatTimer) StartAttack();
+        }
+        // player is too far away to attack, but still threatened if within detectDist
+        else if (GetVectorToPlayer().magnitude > DangerDist)
+        {
+            IsAttacking = false;
+        }
+        else
+        {
+            AttackAction();
+        }
     }
 
     public void FightOrFlightHigh()
     {
         // attack as soon as threatened
+        if (!IsAttacking) StartAttack();
+        else AttackAction();
+    }
+
+    // virtual - not all animals will attack
+    public virtual void StartAttack()
+    {
+        Debug.Log("Attack STARTED");
+        IsAttacking = true;
+        navAgent.SetDestination(player.transform.position);
+    }
+
+    // virtual - not all animals will attack
+    public virtual void AttackAction()
+    {
+        // start ATTACK animation
+
+        // deal damage to player
+        Debug.Log("Already attacking - HYAHHHH");
+
+        bool isCloseToPlayer = GetVectorToPlayer().magnitude <= 2f;
+
+        // explicitly stated cases to be more readable 
+        // rather than nesting statements
+        if (navAgent.hasPath && isCloseToPlayer)
+        {
+            navAgent.ResetPath();
+        }
+        else if (navAgent.hasPath && !isCloseToPlayer)
+        {
+            // check path is correct
+        }
+        else if (!navAgent.hasPath && !isCloseToPlayer)
+        {
+            navAgent.SetDestination(player.transform.position);
+        }
+    }
+
+    public void ResetThreatDetection()
+    {
+        CurrentThreatTimer = 0.0f;
+        CurrentThreatAmount = 0;
     }
 
     // react happily to favourite food
@@ -284,23 +411,11 @@ public abstract class AnimalAI : MonoBehaviour
 
     }
 
-    // virtual - not all animals will attack
-    public virtual void Attack()
-    {
-
-    }
-
     // animal has taken damage. Source could be player or bad food
     public virtual void TakeDamage(int damageNum)
     {
         // reduce current health by damage taken
         CurrentHealth -= damageNum;
-    }
-
-    // less aggressive animals may run away if threatened
-    public virtual void Retreat()
-    {
-
     }
 
     // return if animal is alive or not
@@ -323,6 +438,20 @@ public abstract class AnimalAI : MonoBehaviour
         return transform.forward;
     }
 
+    public bool IsFacingPlayer()
+    {
+        // store vector to player
+        Vector3 toPlayer = GetVectorToPlayer();
+        // difference in y co-ordinates is irrelevant
+        toPlayer.y = 0f;
+
+        // calculate difference between animal forward vector, and the adjusted vector to the player
+        // normalised to compare all from 0 to 1
+        float dotVector = Vector3.Dot(transform.forward.normalized, toPlayer.normalized);
+        // if the vectors are almost identical, return true
+        return dotVector >= 0.99f;
+    }
+
     public void FacePlayer()
     {
         //transform.forward = player.transform.position - transform.position;
@@ -341,12 +470,13 @@ public abstract class AnimalAI : MonoBehaviour
         return transform.position - player.transform.position;
     }
 
-    // if player
+    // if player exits animal's trigger (detect dist)
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             IsThreatened = false;
+            ResetThreatDetection();
         }
     }
 }
