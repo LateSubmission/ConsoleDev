@@ -131,12 +131,12 @@ namespace BehaviourTree
             NodeState state;
             if (Vector3.Distance(player.transform.position, animal.transform.position) > animal.DetectDist)
             {
-                animal.IsThreatened = false;
+                //animal.IsThreatened = false;
                 state = NodeState.FAILURE;
             }
             else
             {
-                //Debug.Log("Player is near " + animal + "!");
+                Debug.Log("Player is near " + animal + "!");
                 state = NodeState.SUCCESS;
             }
             return state;
@@ -154,8 +154,8 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
-            // temporary to guarantee threatened behaviour runs
-            //animal.IsThreatened = true;
+            // USED FOR TESTING ONLY! GUARANTEES THREATENED BEHAVIOUR
+            animal.IsThreatened = true;
 
             // if animal is staying, return success, else return failure
             NodeState state = animal.IsThreatened ? NodeState.SUCCESS : NodeState.FAILURE;
@@ -272,11 +272,11 @@ namespace BehaviourTree
         {
             if (animal.navAgent.remainingDistance > 2f)
             {
-                Debug.Log("Wander not calculated, already has path");
-                return NodeState.SUCCESS; 
+                //Debug.Log("Wander not calculated, already has path");
+                return NodeState.SUCCESS;
             }
 
-            Debug.Log("Wander executed");
+            //Debug.Log("Wander executed");
             // Wander steering behaviour.
             // Could have an array of points on the map to seek
             // Could seek a point in a circle in front of AI
@@ -290,7 +290,7 @@ namespace BehaviourTree
 
             // create sphere origin position
             Vector3 sphereOrigin = animal.transform.position + nextVector * sphereDist;
-            Debug.Log("Sphere origin: " + sphereOrigin);
+            //Debug.Log("Sphere origin: " + sphereOrigin);
 
             animal.navAgent.SetDestination(AiMovement.NewWanderPos(sphereOrigin, sphereDist));
 

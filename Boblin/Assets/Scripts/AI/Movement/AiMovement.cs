@@ -29,7 +29,7 @@ public class AiMovement : MonoBehaviour
     /// <returns></returns>
     public static Vector3 NewWanderPos(Vector3 origin, float distance)
     {
-        Debug.Log("Getting wander pos");
+        //Debug.Log("Getting wander pos");
 
         // find a random point in a unit sphere, multiply the value by a specified distance
         Vector3 randomPoint = Random.insideUnitSphere * distance;
@@ -40,7 +40,7 @@ public class AiMovement : MonoBehaviour
         // Finds nearest point on navmesh to the randomPoint value, within distance, -1 represents all layers.
         NavMesh.SamplePosition(randomPoint, out NavMeshHit navHit, distance, -1);
 
-        Debug.Log("navHit position: " +  navHit.position);
+        //Debug.Log("navHit position: " +  navHit.position);
 
         // return the position on the nav mesh
         return navHit.position;

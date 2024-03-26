@@ -64,7 +64,7 @@ public abstract class AnimalAI : MonoBehaviour
         set
         {
             isTamed = value;
-            //navAgent.ResetPath();
+            navAgent.ResetPath();
         }
     }
 
@@ -76,7 +76,7 @@ public abstract class AnimalAI : MonoBehaviour
         set
         {
             isStay = value;
-            //navAgent.ResetPath();
+            navAgent.ResetPath();
         }
     }
 
@@ -88,9 +88,13 @@ public abstract class AnimalAI : MonoBehaviour
         set
         {
             isThreatened = value;
-            //navAgent.ResetPath();
+            Debug.Log("IsThreatened set to " + value);
+            navAgent.ResetPath();
         }
     }
+
+    // detects when player leaves or enters detectDist
+    private SphereCollider detectCollider;
 
     // level of aggression towards player/animals
     public AggressionLevel aggressionLevel;
@@ -161,11 +165,8 @@ public abstract class AnimalAI : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    //public AnimalAI()
-    private void Start()
-    {
-        
-    }
+    //public AnimalAI() { }
+    private void Start() { }
 
     public void BaseInit()
     {
@@ -175,6 +176,9 @@ public abstract class AnimalAI : MonoBehaviour
         CurrentHealth = maxHealth;
         // set speed for nav agent
         navAgent.speed = walkSpeed;
+
+        // assign sphere collider for detecting player
+        if (!TryGetComponent(out detectCollider)) return;
     }
 
     // checks if player prefs exists already and assigns if so
@@ -195,23 +199,23 @@ public abstract class AnimalAI : MonoBehaviour
         // behaviour tree structure
         Node root = new Sequencer(new List<Node>
         {
-            new Selector(new List<Node>
+            new Selector(false, new List<Node>
             {
                 new Sequencer(new List<Node>
                 {
                     new CheckIsTamed(animal),
-                    new Selector(new List<Node>
+                    new Selector(false, new List<Node>
                     {
                         new Sequencer(new List<Node> { new CheckIsStay(animal), new StayBehaviour(animal) }),
                         new FollowPlayer(animal)
                     })
                 }),
-                new Selector(new List<Node>
+                new Selector(false, new List<Node>
                 {
                     new Sequencer(new List<Node>
                     {
                         new IsPlayerNear(animal),
-                        new Selector(new List<Node>
+                        new Selector(false, new List<Node>
                         {
                             new Sequencer(new List<Node>
                             {
@@ -223,7 +227,7 @@ public abstract class AnimalAI : MonoBehaviour
                         })
                     }),
                     // random selector
-                    new Selector(/*true,*/ new List<Node> { new Wander(animal), new Rest(animal), new Search(animal) })
+                    new Selector(true, new List<Node> { new Wander(animal), new Rest(animal), new Search(animal) })
                 })
             }),
             new Sequencer(new List<Node>
@@ -335,5 +339,14 @@ public abstract class AnimalAI : MonoBehaviour
     public Vector3 GetVectorFromPlayer()
     {
         return transform.position - player.transform.position;
+    }
+
+    // if player
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            IsThreatened = false;
+        }
     }
 }
