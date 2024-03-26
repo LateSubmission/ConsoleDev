@@ -11,39 +11,89 @@ public abstract class AnimalAI : MonoBehaviour
 {
     // _______INDIVIDUAL_______
     [Header("INDIVIDUAL")]
-    public string animalName;
-
+    // typically used in debug statements
+    protected string animalName;
     // _______MOVEMENT_______
     [Header("MOVEMENT")]
     public NavMeshAgent navAgent;
     // how animal can travel
     public TravelLocation travelType;
-    // movement speeds
+    // set movement speeds
     public float walkSpeed, runSpeed;
     // distance of wander sphere origin from player
     public float wanderDist;
+    // timer for updating nav agent destination
+    private float navAgentUpdateTimer;
+    public float NavAgentUpdateTimer
+    {
+        get { return navAgentUpdateTimer; }
+        // timer cannot be negative
+        set { navAgentUpdateTimer = Mathf.Max(0, value); }
+    }
 
     // _______HEALTH_______
     [Header("HEALTH")]
     // current health of animal
-    public int currentHealth;
+    [SerializeField] private int currentHealth;
+    public int CurrentHealth
+    {
+        get { return currentHealth; }
+        // health cannot be negative
+        set { currentHealth = Mathf.Max(0, value); }
+    }
     // max health of animal
     public int maxHealth;
     // life status of animal
-    private bool isAlive = true;
+    [SerializeField] private bool isAlive = true;
 
     // _______AFFECTS BEHAVIOUR_______
     [Header("BEHAVIOUR")]
     // distance at which objects/player can be detected
-    public float safeDist;
+    [SerializeField] private float detectDist;
+    public float DetectDist
+    {
+        get { return detectDist; }
+        set { detectDist = value; }
+    }
+
     // whether animal is wild or tamed
-    public bool isTamed = false;
+    [SerializeField] private bool isTamed = false;
+    public bool IsTamed
+    {
+        get { return isTamed; }
+        set
+        {
+            isTamed = value;
+            //navAgent.ResetPath();
+        }
+    }
+
     // whether animal stays in place or follows player
-    public bool isStay = false; // use an idle animation
+    private bool isStay = false; // use an idle animation
+    public bool IsStay
+    {
+        get { return isStay; }
+        set
+        {
+            isStay = value;
+            //navAgent.ResetPath();
+        }
+    }
+
     // whether animal feels threatened or not
-    public bool isThreatened = false;
+    [SerializeField] private bool isThreatened = false;
+    public bool IsThreatened
+    {
+        get { return isThreatened; }
+        set
+        {
+            isThreatened = value;
+            //navAgent.ResetPath();
+        }
+    }
+
     // level of aggression towards player/animals
-    public AggressionLevel aggression;
+    public AggressionLevel aggressionLevel;
     // current reaction to food
     public FoodEffect foodEffect;
     // current food object to be eaten
@@ -53,23 +103,41 @@ public abstract class AnimalAI : MonoBehaviour
 
     // _______PERSONALITY_______
     [Header("PERSONALITY")]
-    // preferred food
-    public string foodBest;
-    // least favourite food
-    public string foodWorst;
-    // poisonous food
-    public string foodPoisonous;
+    // food that can make the animal like you
+    [SerializeField] private string foodBest;
+    public string FoodBest
+    {
+        get { return foodBest; }
+        // only set the string if it's a food that exists in the world
+        set { if (Food.AllFoodNames.Contains(value)) foodBest = value; }
+    }
+
+    // food that can make animal aggressive
+    [SerializeField] private string foodWorst;
+    public string FoodWorst
+    {
+        get { return foodWorst; }
+        // only set the string if it's a food that exists in the world
+        set { if (Food.AllFoodNames.Contains(value)) foodWorst = value; }
+    }
+
+    // food that can kill the animal
+    [SerializeField] private string foodPoisonous;
+    public string FoodPoisonous
+    {
+        get { return foodPoisonous; }
+        // only set the string if it's a food that exists in the world
+        set { if (Food.AllFoodNames.Contains(value)) foodPoisonous = value; }
+    }
 
     // _______PLAYER REFS_______
     [Header("PLAYER")]
     public GameObject player;
 
-
-    // Should this be in a namespace?
     // various levels of aggression that an animal could have
+    // this defines how an animal behaves when feeling threatened
     public enum AggressionLevel
     {
-        none,
         low,
         medium,
         high
@@ -104,7 +172,7 @@ public abstract class AnimalAI : MonoBehaviour
         // set current health to max possible health
         // needs to be changed in future to allow for saved data to affect
         // this, potentially search player prefs
-        currentHealth = maxHealth;
+        CurrentHealth = maxHealth;
         // set speed for nav agent
         navAgent.speed = walkSpeed;
     }
@@ -115,9 +183,9 @@ public abstract class AnimalAI : MonoBehaviour
     {
         // currentHealth
         if (PlayerPrefs.HasKey(animalPrefix + "CurrentHealth"))
-            animalInstance.currentHealth = PlayerPrefs.GetInt(animalPrefix + "CurrentHealth");
-        else animalInstance.currentHealth = animalMaxHealth;
-        animalInstance.isAlive = (animalInstance.currentHealth > 0);
+            animalInstance.CurrentHealth = PlayerPrefs.GetInt(animalPrefix + "CurrentHealth");
+        else animalInstance.CurrentHealth = animalMaxHealth;
+        animalInstance.isAlive = (animalInstance.CurrentHealth > 0);
     }
 
 
@@ -134,8 +202,8 @@ public abstract class AnimalAI : MonoBehaviour
                     new CheckIsTamed(animal),
                     new Selector(new List<Node>
                     {
-                        new Sequencer(new List<Node> { new CheckIsStay(animal), new StayBehaviour(animal) })
-                        // FollowPlayer();
+                        new Sequencer(new List<Node> { new CheckIsStay(animal), new StayBehaviour(animal) }),
+                        new FollowPlayer(animal)
                     })
                 }),
                 new Selector(new List<Node>
@@ -147,10 +215,11 @@ public abstract class AnimalAI : MonoBehaviour
                         {
                             new Sequencer(new List<Node>
                             {
-                                // CheckIsThreatened(),
-                                //new FightOrFlight(animal)
+                                new CheckIsThreatened(animal),
+                                //new IsPlayerNear(animal),
+                                new FightOrFlight(animal)
                             }),
-                            // WaitForPlayer()
+                            new WaitForPlayer(animal)
                         })
                     }),
                     // random selector
@@ -159,10 +228,10 @@ public abstract class AnimalAI : MonoBehaviour
             }),
             new Sequencer(new List<Node>
             {
-                // CheckHasFood(),
-                // EatFood(),
-                // CheckFoodEffect(),
-                // ReactToFood()
+                new CheckHasFood(animal),
+                new EatFood(animal),
+                new CheckFoodEffect(animal),
+                new ReactToFood(animal)
             }),
 
         });
@@ -170,39 +239,27 @@ public abstract class AnimalAI : MonoBehaviour
         return root;
     }
 
-    // check if the animal is wild or tamed
-    public virtual bool GetIsTamed()
+    public void FightOrFlightLow()
     {
-        return isTamed;
+        //Debug.Log("Fight or Flight Low RUN");
+
+        // move in direction opposite to player/threat
+        // vector in opposite direction to player
+        Vector3 vectorAway = GetVectorFromPlayer().normalized * DetectDist;
+        //NavMesh.SamplePosition(vectorAway, out NavMeshHit hit, 10.0f, -1);
+        //navAgent.SetDestination(hit.position);
+        navAgent.SetDestination(vectorAway);
     }
 
-    // check if the animal is staying or following
-    public virtual bool GetIsStay()
+    public void FightOrFlightMedium()
     {
-        return isStay;
+        // look aggressive
+        // if player threatens again, or does not move after an amount of time, attack
     }
 
-    // check if animal is feeling threatened or not
-    public bool GetIsThreatened()
+    public void FightOrFlightHigh()
     {
-        return isThreatened;
-    }
-
-    // determines behaviour in response to threat
-    public void FightOrFlight(AnimalAI animal)
-    {
-        switch (animal)
-        {
-            case SparrowAI:
-                //Debug.Log("I'm a sparrow");
-                break;
-            case ColobusAI:
-                //Debug.Log("I'm a colobus");
-                break;
-            default:
-                //Debug.Log("I am a different animal");
-                break;
-        }
+        // attack as soon as threatened
     }
 
     // react happily to favourite food
@@ -229,11 +286,11 @@ public abstract class AnimalAI : MonoBehaviour
 
     }
 
-    // should this be DealDamage()? Look into which would work best
+    // animal has taken damage. Source could be player or bad food
     public virtual void TakeDamage(int damageNum)
     {
         // reduce current health by damage taken
-        currentHealth -= damageNum;
+        CurrentHealth -= damageNum;
     }
 
     // less aggressive animals may run away if threatened
@@ -274,5 +331,9 @@ public abstract class AnimalAI : MonoBehaviour
     public Vector3 GetVectorToPlayer()
     {
         return player.transform.position - transform.position;
+    }
+    public Vector3 GetVectorFromPlayer()
+    {
+        return transform.position - player.transform.position;
     }
 }

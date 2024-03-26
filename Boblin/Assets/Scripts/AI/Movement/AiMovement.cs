@@ -3,6 +3,10 @@ using UnityEngine.AI;
 
 public class AiMovement : MonoBehaviour
 {
+    // potentially need a reference to the animal.
+    // Either make functions static and have reference in each function, 
+    // or maybe have an instance of this class on each animal? 
+
     public NavMeshAgent navAgent;
 
     // Start is called before the first frame update
@@ -23,7 +27,7 @@ public class AiMovement : MonoBehaviour
     /// <param name="origin">The origin of a sphere in which a point will be generated</param>
     /// <param name="distance">The radius of the sphere</param>
     /// <returns></returns>
-    public static Vector3 GetWanderPos(Vector3 origin, float distance)
+    public static Vector3 NewWanderPos(Vector3 origin, float distance)
     {
         Debug.Log("Getting wander pos");
 
@@ -42,18 +46,23 @@ public class AiMovement : MonoBehaviour
         return navHit.position;
     }
 
-    public void Wander()
-    {
-
-    }
-
     public void Rest()
     {
-
+        // start sit animation, do not move for set amount of time or until provoked (e.g. isThreatened)
     }
 
     public void Search()
     {
+        // searching for a particular food. Is this like wander behaviour but with a sensor?
+        // potentially check specific places where favourite food may be (e.g. seeds under a tree?)
+        
+        // perhaps use nav mesh to find a specific location, then behaviour similar to wander 
+        // to find food in this area.
+    }
 
+    // Stay?
+    public void Stay()
+    {
+        // start idle animation. Sit is reserved for rest behaviour
     }
 }

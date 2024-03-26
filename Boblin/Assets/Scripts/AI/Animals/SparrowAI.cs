@@ -1,5 +1,4 @@
 using BehaviourTree;
-using UnityEngine;
 
 public class SparrowAI : AnimalAI
 {
@@ -24,8 +23,6 @@ public class SparrowAI : AnimalAI
 #endif
 
         animalName = "Sparrow";
-
-
     }
 
     private void Update()

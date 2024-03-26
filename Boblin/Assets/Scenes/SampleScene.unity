@@ -452,7 +452,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127066117}
-  m_LocalRotation: {x: 0.33798668, y: -0.11234335, z: 0.040673904, w: 0.9335361}
+  m_LocalRotation: {x: 0.33798665, y: -0.11234332, z: 0.040673885, w: 0.9335361}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -823,7 +823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cc6a5568984f4248885c3d0346e259e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sparrow: {fileID: 900849876}
 --- !u!4 &271886132
 Transform:
   m_ObjectHideFlags: 0
@@ -874,7 +873,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -26, y: -30}
+  m_AnchoredPosition: {x: -26, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &291197843
@@ -1038,7 +1037,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -62, y: -30}
+  m_AnchoredPosition: {x: -62, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &308881303
@@ -1650,7 +1649,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6876875519848880603, guid: 3ac0c1bd9ddc8c443ae08a6d0b80abbf,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 863060645}
   m_SourcePrefab: {fileID: 100100000, guid: 3ac0c1bd9ddc8c443ae08a6d0b80abbf, type: 3}
 --- !u!4 &555420767 stripped
 Transform:
@@ -1693,7 +1696,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -136.4, y: -30}
+  m_AnchoredPosition: {x: -136.4, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &596246330
@@ -1965,7 +1968,7 @@ PrefabInstance:
     - target: {fileID: 4992758198669102562, guid: 84b7c8441f160174fa5c6f94cf397f0a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.18
+      value: 2.66
       objectReference: {fileID: 0}
     - target: {fileID: 4992758198669102562, guid: 84b7c8441f160174fa5c6f94cf397f0a,
         type: 3}
@@ -2162,6 +2165,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &863060644 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6876875519848880603, guid: 3ac0c1bd9ddc8c443ae08a6d0b80abbf,
+    type: 3}
+  m_PrefabInstance: {fileID: 550665326}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &863060645
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863060644}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 2, y: 0, z: 3.6}
+  m_TimeToStationary: 0.5
 --- !u!1 &900849875 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6788538757290762323, guid: 016b40314a59a8a4ba653cffe690328b,
@@ -2180,7 +2205,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8da69b6abda368f4084aed5589814f6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animalName: 
   navAgent: {fileID: 900849882}
   travelType: 0
   walkSpeed: 1
@@ -2188,11 +2212,11 @@ MonoBehaviour:
   wanderDist: 5
   currentHealth: 0
   maxHealth: 5
-  safeDist: 8
+  isAlive: 1
+  detectDist: 0
   isTamed: 0
-  isStay: 0
   isThreatened: 0
-  aggression: 0
+  aggressionLevel: 0
   foodEffect: 0
   foodTarget: {fileID: 0}
   foodEaten: {fileID: 0}
@@ -2822,7 +2846,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -99, y: -30}
+  m_AnchoredPosition: {x: -99, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1131777311
@@ -2915,7 +2939,7 @@ PrefabInstance:
     - target: {fileID: 6788538757290762322, guid: 016b40314a59a8a4ba653cffe690328b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.22
+      value: 2.638
       objectReference: {fileID: 0}
     - target: {fileID: 6788538757290762322, guid: 016b40314a59a8a4ba653cffe690328b,
         type: 3}
@@ -12292,7 +12316,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.14999999
+  m_VoxelSize: 0.120000005
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 0c713eea8a1e2f346aa1716721bad979, type: 2}
   m_BuildHeightMesh: 0
@@ -12612,7 +12636,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -212.2, y: -30}
+  m_AnchoredPosition: {x: -212.2, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1565449348
@@ -12861,7 +12885,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -1021, y: 43}
+  m_AnchoredPosition: {x: -1021, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1623172956
@@ -14098,19 +14122,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60c62d921493184fabd4b6f1002ea4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animalName: 
   navAgent: {fileID: 1989541331}
   travelType: 0
   walkSpeed: 2
   runSpeed: 5
-  wanderDist: 20
+  wanderDist: 10
   currentHealth: 0
   maxHealth: 10
-  safeDist: 8
+  isAlive: 1
+  detectDist: 10
   isTamed: 0
-  isStay: 0
-  isThreatened: 0
-  aggression: 0
+  isThreatened: 1
+  aggressionLevel: 0
   foodEffect: 0
   foodTarget: {fileID: 0}
   foodEaten: {fileID: 0}
@@ -14127,7 +14150,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1989541326}
   m_Enabled: 1
   m_AgentTypeID: -334000983
-  m_Radius: 0.45
+  m_Radius: 0.36
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -14181,7 +14204,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -173.4, y: -30}
+  m_AnchoredPosition: {x: -173.4, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2053411429
@@ -14421,7 +14444,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -899, y: 34}
+  m_AnchoredPosition: {x: -899, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2107619493

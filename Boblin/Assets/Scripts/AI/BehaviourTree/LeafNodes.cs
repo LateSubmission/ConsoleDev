@@ -1,9 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 // This file contains all leaf nodes for animal AI behaviour tree
-
-
 namespace BehaviourTree
 {
     public abstract class LeafNode : Node
@@ -23,7 +20,6 @@ namespace BehaviourTree
 
         // overrides Execute() from node but requires definition in derived classes
         public override abstract NodeState Execute();
-
     }
 
     /// <summary>
@@ -38,7 +34,7 @@ namespace BehaviourTree
         public override NodeState Execute()
         {
             // if animal is tamed, return success, else return failure
-            NodeState state = animal.GetIsTamed() ? NodeState.SUCCESS : NodeState.FAILURE;
+            NodeState state = animal.IsTamed ? NodeState.SUCCESS : NodeState.FAILURE;
             //Debug.Log("Is " + animal.animalName + " tamed? " + animal.GetIsTamed());
             return state;
         }
@@ -56,7 +52,7 @@ namespace BehaviourTree
         public override NodeState Execute()
         {
             // if animal is staying, return success, else return failure
-            NodeState state = animal.GetIsStay() ? NodeState.SUCCESS : NodeState.FAILURE;
+            NodeState state = animal.IsStay ? NodeState.SUCCESS : NodeState.FAILURE;
             //Debug.Log("Is Sparrow staying? " + animal.GetIsStay());
             return state;
         }
@@ -73,7 +69,48 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
+            // stay in place, use idle (standing) animation
+
             NodeState state = NodeState.SUCCESS;
+            return state;
+        }
+    }
+
+    /// <summary>
+    /// Sets nav mesh agent to follow player
+    /// </summary>
+    public class FollowPlayer : LeafNode
+    {
+        // use constructor from LeafNode, passing in animalType
+        public FollowPlayer(AnimalAI animalType) : base(animalType) { }
+
+        // determines state of this node
+        public override NodeState Execute()
+        {
+            bool isCloseToPlayer = animal.GetVectorToPlayer().magnitude < 2.0f;
+            // want the animal to continue following unless they are close enough to the player
+            if (isCloseToPlayer)
+            {
+                // allowed to have no path when close enough
+                animal.navAgent.ResetPath();
+                return NodeState.SUCCESS;
+            }
+            else
+            {
+                // only want to update position every few seconds to save performance
+                animal.NavAgentUpdateTimer += Time.deltaTime;
+                // after 3s, update destination
+                if (animal.NavAgentUpdateTimer >= 3.0f)
+                {
+                    animal.navAgent.SetDestination(player.transform.position);
+                    // reset timer so the cycle continues
+                    animal.NavAgentUpdateTimer = 0f;
+                    return NodeState.SUCCESS;
+                }
+            }
+
+            // if they have no path at this point, the node fails
+            NodeState state = animal.navAgent.hasPath ? NodeState.SUCCESS : NodeState.FAILURE;
             return state;
         }
     }
@@ -89,30 +126,17 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
+            //Debug.Log("IsPlayerNear RUN");
+
             NodeState state;
-            Vector3 playerPos = player.transform.position;
-            if (Vector3.Distance(playerPos, animal.transform.position) > animal.safeDist)
+            if (Vector3.Distance(player.transform.position, animal.transform.position) > animal.DetectDist)
             {
+                animal.IsThreatened = false;
                 state = NodeState.FAILURE;
             }
             else
             {
-                Debug.Log("Player is near " + animal + "!");
-
-                // calculate vector to player
-                Vector3 vectorToPlayer = animal.GetVectorToPlayer();
-
-                // make no difference between animal and player y value
-                // so only comparing x and z directions
-                vectorToPlayer.y = 0.0f;
-
-                // dot product between forward vector and vector to player
-                float dotVector = Vector3.Dot(animal.transform.forward.normalized, vectorToPlayer.normalized);
-
-                // only turn if not already facing player
-                if (vectorToPlayer.magnitude > animal.safeDist * 0.9f || dotVector < 0.99f) animal.FacePlayer();
-                else animal.navAgent.ResetPath();
-
+                //Debug.Log("Player is near " + animal + "!");
                 state = NodeState.SUCCESS;
             }
             return state;
@@ -130,9 +154,12 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
+            // temporary to guarantee threatened behaviour runs
+            //animal.IsThreatened = true;
+
             // if animal is staying, return success, else return failure
-            NodeState state = animal.GetIsThreatened() ? NodeState.SUCCESS : NodeState.FAILURE;
-            //Debug.Log("Is Sparrow threatened? " + animal.GetIsThreatened());
+            NodeState state = animal.IsThreatened ? NodeState.SUCCESS : NodeState.FAILURE;
+            //Debug.Log("Is Sparrow threatened? " + animal.IsThreatened);
             return state;
         }
     }
@@ -148,9 +175,52 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
-            animal.FightOrFlight(animal);
+            //Debug.Log("FightOrFlight LEAF NODE RUN");
 
-            return NodeState.SUCCESS;
+            NodeState state;
+
+            // only want to update position every few seconds to save performance
+            //animal.NavAgentUpdateTimer += Time.deltaTime;
+
+            // after 3s, update destination
+            //if (animal.NavAgentUpdateTimer >= 3.0f || !animal.navAgent.hasPath)
+            if (animal.navAgent.remainingDistance < 4.0f)
+            {
+                switch (animal.aggressionLevel)
+                {
+                    case AnimalAI.AggressionLevel.low:
+                        // I will run/fly/swim away
+                        animal.FightOrFlightLow();
+                        state = NodeState.SUCCESS;
+                        break;
+
+                    case AnimalAI.AggressionLevel.medium:
+                        // I'll give you a warning, don't threaten me more
+                        animal.FightOrFlightMedium();
+                        state = NodeState.SUCCESS;
+                        break;
+
+                    case AnimalAI.AggressionLevel.high:
+                        // "I've been looking forward to this..." - Count Dooku
+                        animal.FightOrFlightHigh();
+                        state = NodeState.SUCCESS;
+                        break;
+
+                    default:
+                        // Something went wrong if we got here, return false for FAILURE
+                        state = NodeState.FAILURE;
+                        break;
+                }                
+
+                // reset timer so the cycle continues
+                //animal.NavAgentUpdateTimer = 0f;
+                return state;
+            }
+            else
+            {
+                //Debug.Log("FightOrFlight already calculated recently, skipped.");
+                return NodeState.SUCCESS;
+            }
         }
     }
 
@@ -171,6 +241,20 @@ namespace BehaviourTree
                 // check if food in radius? or just do nothing
             // idle animation
 
+            // calculate vector to player
+            Vector3 vectorToPlayer = animal.GetVectorToPlayer();
+
+            // make it so there is no difference between animal and player y values
+            // so only comparing x and z directions
+            vectorToPlayer.y = 0.0f;
+
+            // used to see if animal is facing the player
+            float dotVector = Vector3.Dot(animal.transform.forward.normalized, vectorToPlayer.normalized);
+
+            // only turn if not already facing player
+            if (vectorToPlayer.magnitude > animal.DetectDist * 0.9f || dotVector < 0.99f) animal.FacePlayer();
+            else animal.navAgent.ResetPath();
+
             return NodeState.SUCCESS;
         }
     }
@@ -186,9 +270,9 @@ namespace BehaviourTree
         // determines state of this node
         public override NodeState Execute()
         {
-            if (animal.navAgent.hasPath)
+            if (animal.navAgent.remainingDistance > 2f)
             {
-                Debug.Log("Wander not executed, already has path");
+                Debug.Log("Wander not calculated, already has path");
                 return NodeState.SUCCESS; 
             }
 
@@ -200,11 +284,15 @@ namespace BehaviourTree
             // distance to sphere origin from player
             float sphereDist = animal.wanderDist;
 
+            Vector3 nextVector = animal.GetForwardDirection();
+            nextVector.x *= Random.Range(0.5f, 1f);
+            nextVector.z *= Random.Range(0.5f, 1f);
+
             // create sphere origin position
-            Vector3 sphereOrigin = animal.transform.position + animal.GetForwardDirection() * sphereDist;
+            Vector3 sphereOrigin = animal.transform.position + nextVector * sphereDist;
             Debug.Log("Sphere origin: " + sphereOrigin);
 
-            animal.navAgent.SetDestination(AiMovement.GetWanderPos(sphereOrigin, sphereDist));
+            animal.navAgent.SetDestination(AiMovement.NewWanderPos(sphereOrigin, sphereDist));
 
             return NodeState.SUCCESS;
         }
@@ -237,7 +325,7 @@ namespace BehaviourTree
         // use constructor from LeafNode, passing in animalType
         public Search(AnimalAI animalType) : base(animalType)
         {
-            foodStr = animalType.foodBest;
+            foodStr = animalType.FoodBest;
         }
 
         // determines state of this node
@@ -266,7 +354,7 @@ namespace BehaviourTree
             // to store distance to each food object in loop
             float distToFood;
             // store distance to closest food object
-            float closestFoodDist = animal.safeDist;
+            float closestFoodDist = animal.DetectDist;
             // store current nearest food object locally
             Food target = null;
 
@@ -280,7 +368,7 @@ namespace BehaviourTree
                 distToFood = Vector3.Distance(animal.transform.position, food.position);
 
                 // if the food GO is close enough, add it to the nearby list
-                if (distToFood < animal.safeDist)
+                if (distToFood < animal.DetectDist)
                 {
                     // if target not already set or this food is closer than others
                     if (target == null || distToFood < closestFoodDist)
@@ -356,19 +444,19 @@ namespace BehaviourTree
         public override NodeState Execute()
         {
             // if the current food is the animal's favourite
-            if (currentFood.type == animal.foodBest)
+            if (currentFood.type == animal.FoodBest)
             {
                 // set the food's effect on the animal to "like"
                 animal.foodEffect = AnimalAI.FoodEffect.like;
             }
             // if the current food is the animal's _least_ favourite
-            else if (currentFood.type == animal.foodWorst)
+            else if (currentFood.type == animal.FoodWorst)
             {
                 // set the food's effect on the animal to "dislike"
                 animal.foodEffect = AnimalAI.FoodEffect.dislike;
             }
             // if the current food is poisonous to the animal
-            else if (currentFood.type == animal.foodPoisonous)
+            else if (currentFood.type == animal.FoodPoisonous)
             {
                 // set the food's effect on the animal to "poisoned"
                 animal.foodEffect = AnimalAI.FoodEffect.poisoned;
